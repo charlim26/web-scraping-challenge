@@ -34,14 +34,14 @@ def scrape():
     mars_data['news_paragraph'] = news_p
     
 
-    # Visit jpl.com
+    # Image -  Visit jpl.com
     jpl_url = 'https://www.jpl.nasa.gov'
     jpl_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars#submit'
     
     browser.visit(jpl_image_url)
     browser.is_element_present_by_css("ul.item_list li.slide", wait_time=1)
     
-    # Scrape page into Soup
+        # Scrape page into Soup
     html = browser.html
     jpl_soup = bs(html, "html.parser")
 
@@ -49,7 +49,7 @@ def scrape():
     featured_image_url = jpl_url + relative_image_path
     mars_data['featured_image_url'] = featured_image_url 
      
-    
+    # Mars Facts
     mars_url = 'https://space-facts.com/mars/'
     browser.visit(mars_url)
     browser.is_element_present_by_css("ul.item_list li.slide", wait_time=1)
@@ -62,31 +62,31 @@ def scrape():
     mars_data['mars_df'] = html_table
 
 
-    #Visit USGS website
+    # Hemispheres - Visit USGS website
     hemis_url = 'https://astrogeology.usgs.gov'
     hemis_img_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(hemis_img_url)
     browser.is_element_present_by_css("ul.item_list li.slide", wait_time=1)
 
-    # Scrape with beautiful soup
+        # Scrape with beautiful soup
     html = browser.html
     soup = bs(html, 'html.parser')
     results = soup.find_all('div', class_='item')
 
-    # Create empty list 
+        # Create empty list 
     hemis_list = []
 
-    # Loop through the results
+        # Loop through the results
     for result in results: 
         title = result.find('h3').text
-        img_url = result.find('a')['href']
+        img_url = result.find('a', class_='itemLink product-item')['href']
         browser.visit(hemis_url + img_url)
         img_html = browser.html
     
         soup = bs(img_html, 'html.parser')
         img_url = hemis_url + soup.find('img', class_='wide-image')['src']
     
-    # Append the information into list  
+        # Append the information into list  
         hemis_list.append({"title" : title, "img_url" : img_url})
 
     mars_data['hemis_list'] = hemis_list       
